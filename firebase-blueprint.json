@@ -1,0 +1,191 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Private user account preferences, opening balance, and monthly budget configuration.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated Firebase user UID."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name (1-100 chars)."
+        },
+        "email": {
+          "type": "string",
+          "description": "Optional user email address (max 120 chars)."
+        },
+        "openingBalancePaise": {
+          "type": "integer",
+          "description": "Initial wallet/bank opening balance in paise."
+        },
+        "monthlyBudgetPaise": {
+          "type": "integer",
+          "description": "Target monthly expense limit in paise (0 if unset)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp()."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp updated via FieldValue.serverTimestamp()."
+        }
+      },
+      "required": [
+        "userId",
+        "displayName",
+        "openingBalancePaise",
+        "monthlyBudgetPaise",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "LedgerTransaction": {
+      "title": "LedgerTransaction",
+      "description": "Daily income or expense record belonging to a single authenticated user.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated owner UID."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["EXPENSE", "INCOME"],
+          "description": "Transaction direction: EXPENSE or INCOME."
+        },
+        "amountPaise": {
+          "type": "integer",
+          "description": "Positive monetary amount stored in integer paise."
+        },
+        "category": {
+          "type": "string",
+          "description": "Hindi category label (1-60 chars)."
+        },
+        "note": {
+          "type": "string",
+          "description": "Transaction description or note (0-250 chars)."
+        },
+        "dateKey": {
+          "type": "string",
+          "description": "Canonical sortable date string YYYY-MM-DD."
+        },
+        "monthKey": {
+          "type": "string",
+          "description": "Canonical month key YYYY-MM."
+        },
+        "source": {
+          "type": "string",
+          "enum": ["MANUAL", "SMART_TEXT", "UDHAR_SYNC"],
+          "description": "Entry method origin."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp via FieldValue.serverTimestamp()."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server modification timestamp via FieldValue.serverTimestamp()."
+        }
+      },
+      "required": [
+        "userId",
+        "type",
+        "amountPaise",
+        "category",
+        "note",
+        "dateKey",
+        "monthKey",
+        "source",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "UdharEntry": {
+      "title": "UdharEntry",
+      "description": "Credit/loan ledger entry for money given, borrowed, or repaid with a person.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated owner UID."
+        },
+        "personName": {
+          "type": "string",
+          "description": "Contact or person display name (1-80 chars)."
+        },
+        "personKey": {
+          "type": "string",
+          "description": "Normalized lowercase key for grouping person-wise balances."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Optional phone number (max 20 chars)."
+        },
+        "entryType": {
+          "type": "string",
+          "enum": ["GIVEN", "BORROWED", "REPAYMENT_RECEIVED", "REPAYMENT_PAID"],
+          "description": "Udhar ledger entry type."
+        },
+        "amountPaise": {
+          "type": "integer",
+          "description": "Positive monetary amount in integer paise."
+        },
+        "dateKey": {
+          "type": "string",
+          "description": "Canonical date string YYYY-MM-DD."
+        },
+        "dueDateKey": {
+          "type": "string",
+          "description": "Optional reminder/due date string YYYY-MM-DD."
+        },
+        "note": {
+          "type": "string",
+          "description": "Optional note or context (0-250 chars)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp via FieldValue.serverTimestamp()."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server modification timestamp via FieldValue.serverTimestamp()."
+        }
+      },
+      "required": [
+        "userId",
+        "personName",
+        "personKey",
+        "entryType",
+        "amountPaise",
+        "dateKey",
+        "note",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Stores each user's private financial profile and preferences."
+    },
+    "/users/{userId}/transactions/{transactionId}": {
+      "schema": { "$ref": "#/entities/LedgerTransaction" },
+      "description": "Private daily income and expense transactions for the authenticated user."
+    },
+    "/users/{userId}/udharEntries/{entryId}": {
+      "schema": { "$ref": "#/entities/UdharEntry" },
+      "description": "Private person-wise udhar (credit/debit/repayment) ledger entries."
+    }
+  }
+}

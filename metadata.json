@@ -1,0 +1,6 @@
+{
+  "name": "Mera Paisa Hisab",
+  "description": "हिंदी में व्यक्तिगत दैनिक खर्च, आय, उधार और मासिक रिपोर्ट प्रबंधन ऐप",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
